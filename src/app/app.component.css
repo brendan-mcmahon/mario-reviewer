@@ -16,7 +16,6 @@ mat-card {
 .flex-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
 }
 
 .double-header {
