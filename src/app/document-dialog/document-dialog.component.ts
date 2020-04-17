@@ -34,7 +34,7 @@ export class DocumentDialogComponent implements OnInit {
 
       // tslint:disable-next-line:forin
       for (const i in rawFile.variables) {
-        history.variables.push(new Variable(i, rawFile.variables[i].value, 'all'));
+        history.variables.push(new Variable(i, rawFile.variables[i].value, 'Release'));
       }
 
       rawFile.environments.forEach(env => {

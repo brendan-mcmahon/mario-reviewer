@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/cor
 import { Variable } from '../history.model';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-variable-display',
@@ -16,10 +17,13 @@ export class VariableDisplayComponent implements OnInit, AfterViewInit {
   public dataSource = new MatTableDataSource<Variable>();
 
   filterText: string;
+  scopeFilterControl = new FormControl();
+  scopes: string[];
 
   displayedColumns = ['name', 'value', 'scope'];
 
   statusFilters = ['added', 'deleted', 'edited', 'unchanged'];
+  scopeFilters = [];
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -29,27 +33,36 @@ export class VariableDisplayComponent implements OnInit, AfterViewInit {
   addStatusFilter(status: string) {
     this.statusFilters.push(status);
 
-    this.applyStatusFilters();
+    this.applyFilters();
   }
 
   removeStatusFilter(status: string) {
     this.statusFilters = this.statusFilters.filter(f => f !== status);
 
-    this.applyStatusFilters();
+    this.applyFilters();
   }
 
-  private applyStatusFilters() {
+  toggleAllScopes(event: Event) {
+    if (this.scopeFilters.length === 0) {
+      this.scopeFilters = this.variables.map(v => v.scope).filter((v, i, a) => a.indexOf(v) === i);
+    } else {
+      this.scopeFilters = [];
+    }
+
+    this.applyFilters();
+  }
+
+  applyFilters() {
     const listCopy = [...this.variables];
     this.dataSource.data = listCopy
-      .filter(v => this.statusFilters
-        .includes(v.status))
+      .filter(v => this.statusFilters.includes(v.status))
+      .filter(v => this.scopeFilters.includes(v.scope))
       .sort((a, b) => {
         if (a.name < b.name) { return -1; }
         if (a.name > b.name) { return 1; }
         return 0;
       });
   }
-
 
   getStatusClass(v: Variable) {
     if (v.status === 'deleted') {
@@ -63,6 +76,7 @@ export class VariableDisplayComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.dataSource.data = this.variables;
+    this.scopes = this.variables.map(v => v.scope).filter((v, i, a) => a.indexOf(v) === i);
   }
 
   ngAfterViewInit(): void {
