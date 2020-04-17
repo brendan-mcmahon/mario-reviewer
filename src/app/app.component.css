@@ -13,9 +13,19 @@ mat-card {
   /* min-height: 50vh; */
 }
 
+app-variable-display {
+  min-width: 45vw;
+}
+
 .flex-container {
   display: flex;
+  flex-direction: column;
+}
+
+.side-by-side {
+  display: flex;
   flex-direction: row;
+  justify-content: space-between;
 }
 
 .double-header {

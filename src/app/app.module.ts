@@ -21,6 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { LayoutModule } from '@angular/cdk/layout';
 import { DocumentDialogComponent } from './document-dialog/document-dialog.component';
 import { VariableDisplayComponent } from './variable-display/variable-display.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   exports: [
@@ -33,7 +34,8 @@ import { VariableDisplayComponent } from './variable-display/variable-display.co
   declarations: [
     AppComponent,
     DocumentDialogComponent,
-    VariableDisplayComponent
+    VariableDisplayComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,14 @@
+<mat-card *ngIf="document">
+  <div class="double-header">
+    <mat-card-title>{{document.modifiedBy}}</mat-card-title>
+    <mat-card-title>{{document.modifiedDate | date}}</mat-card-title>
+  </div>
+  <mat-card-content><p>{{document.comment}}</p></mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="!document">
+  <div class="double-header">
+    <mat-card-title>{{title}}</mat-card-title>
+  </div>
+  <mat-card-content><p>Click the update button to paste your json and start comparing</p></mat-card-content>
+</mat-card>
