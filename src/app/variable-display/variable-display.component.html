@@ -1,0 +1,48 @@
+<mat-card>
+  <mat-card-content *ngIf="variables">
+    <mat-card-title>Variables</mat-card-title>
+
+    <div class="filters">
+      <mat-form-field class="example-full-width">
+        <mat-label>Search</mat-label>
+        <input [(ngModel)]="filterText" (keyup)="applyFilter($event)" matInput>
+      </mat-form-field>
+      <div class="dots">
+        <div *ngIf="!statusFilters.includes('added')" class="green dot-unselected" (click)="addStatusFilter('added')"></div>
+        <div *ngIf="statusFilters.includes('added')" class="green dot-selected" (click)="removeStatusFilter('added')"></div>
+
+        <div *ngIf="!statusFilters.includes('edited')" class="blue dot-unselected" (click)="addStatusFilter('edited')"></div>
+        <div *ngIf="statusFilters.includes('edited')" class="blue dot-selected" (click)="removeStatusFilter('edited')"></div>
+
+        <div *ngIf="!statusFilters.includes('deleted')" class="red dot-unselected" (click)="addStatusFilter('deleted')"></div>
+        <div *ngIf="statusFilters.includes('deleted')" class="red dot-selected" (click)="removeStatusFilter('deleted')"></div>
+
+        <div *ngIf="!statusFilters.includes('unchanged')" class="gray dot-unselected" (click)="addStatusFilter('unchanged')"></div>
+        <div *ngIf="statusFilters.includes('unchanged')" class="gray dot-selected" (click)="removeStatusFilter('unchanged')"></div>
+      </div>
+    </div>
+
+    <table mat-table matSort [dataSource]="dataSource"  class="mat-elevation-z8">
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="value">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Value </th>
+        <td mat-cell *matCellDef="let element"> {{element.value}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="scope">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Scope </th>
+        <td mat-cell *matCellDef="let element"> {{element.scope}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row [ngClass]="getStatusClass(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    </table>
+
+  </mat-card-content>
+</mat-card>

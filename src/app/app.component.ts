@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { HistoryDocument, Variable } from './history.model';
+import { MatDialog } from '@angular/material/dialog';
+import { DocumentDialogComponent } from './document-dialog/document-dialog.component';
+import { VariableComparerService } from './variable-comparer.service';
 
 @Component({
   selector: 'app-root',
@@ -8,31 +11,40 @@ import { HistoryDocument, Variable } from './history.model';
 })
 export class AppComponent {
   title = 'mario';
-  fileText: string;
-  history: HistoryDocument;
-  something: any;
+  before: HistoryDocument;
+  after: HistoryDocument;
 
-  public constructor() {
+  public constructor(public dialog: MatDialog, private variableComparer: VariableComparerService) { }
 
+  openBeforeDialog(): void {
+    const dialogRef = this.dialog.open(DocumentDialogComponent, {
+      width: '80vw',
+      height: '80vh'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.before = result;
+      if (this.before && this.after) {
+        const comparisonResults = this.variableComparer.compare(this.before.variables, this.after.variables);
+        this.before.variables = comparisonResults.before;
+        this.after.variables = comparisonResults.after;
+      }
+    });
   }
 
-  update() {
-    console.log('updating...');
-    if (this.fileText !== '') {
-      const something = JSON.parse(this.fileText);
+  openAfterDialog(): void {
+    const dialogRef = this.dialog.open(DocumentDialogComponent, {
+      width: '80vw',
+      height: '80vh'
+    });
 
-      console.log(something);
-
-      this.history = new HistoryDocument();
-
-      this.history.modifiedBy = something.modifiedBy.displayName;
-
-      for (const i in something.variables) {
-        this.history.variables.push(new Variable(i, something.variables[i].value));
+    dialogRef.afterClosed().subscribe((result) => {
+      this.after = result;
+      if (this.before && this.after) {
+        const comparisonResults = this.variableComparer.compare(this.before.variables, this.after.variables);
+        this.before.variables = comparisonResults.before;
+        this.after.variables = comparisonResults.after;
       }
-
-    // console.log(JSON.stringify(result));
-
-    }
+    });
   }
 }

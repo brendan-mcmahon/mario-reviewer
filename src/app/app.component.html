@@ -1,18 +1,55 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <!-- <div style="text-align:center"> -->
 
+<div class="flex-container">
+
 <div>
-  <mat-slider min="1" max="100" step="1" value="1"></mat-slider>
+  <mat-card *ngIf="before">
+    <div class="double-header">
+      <mat-card-title>{{before.modifiedBy}}</mat-card-title>
+      <mat-card-title>{{before.modifiedDate | date}}</mat-card-title>
+    </div>
+    <mat-card-content><p>{{before.comment}}</p></mat-card-content>
+  </mat-card>
 
-  <textarea [(ngModel)]="fileText"></textarea>
+  <mat-card *ngIf="!before">
+    <div class="double-header">
+      <mat-card-title>Before</mat-card-title>
+    </div>
+    <mat-card-content><p>Click the update button to paste your json and start comparing</p></mat-card-content>
+  </mat-card>
 
-  <p>{{history.modifiedBy}}</p>
-  <ul>
-    <li *ngFor="let v of history.variables">{{v.name}}: {{v.value}}</li>
-  </ul>
+  <app-variable-display *ngIf="before" [variables]="before.variables"></app-variable-display>
 
-  <button (click)="update()">Update</button>
+  <button mat-raised-button color="primary" (click)="openBeforeDialog()">Update</button>
+</div>
+
+<div>
+  <mat-card *ngIf="after">
+    <div class="double-header">
+      <mat-card-title>{{after.modifiedBy}}</mat-card-title>
+      <mat-card-title>{{after.modifiedDate | date}}</mat-card-title>
+    </div>
+    <mat-card-content><p>{{after.comment}}</p></mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="!after">
+    <div class="double-header">
+      <mat-card-title>After</mat-card-title>
+    </div>
+    <mat-card-content><p>Click the update button to paste your json and start comparing</p></mat-card-content>
+  </mat-card>
+
+  <app-variable-display *ngIf="after" [variables]="after.variables"></app-variable-display>
+
+  <button mat-raised-button color="primary" (click)="openAfterDialog()">Update</button>
 
 </div>
+
+
+</div>
+
+<!-- <button (click)="intersectTest()">Test</button> -->
+
 
 <router-outlet></router-outlet>

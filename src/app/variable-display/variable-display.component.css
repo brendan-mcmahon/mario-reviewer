@@ -1,0 +1,76 @@
+table {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  min-width: 500px;
+}
+
+mat-card {
+  margin: 5px;
+}
+
+mat-card-content {
+  max-height: 75vh;
+  overflow: auto;
+}
+
+.green {
+  background-color: #58A053;
+  border: solid 1px #58A053;
+}
+
+.blue {
+  background-color: #3F8DC1;
+  border: solid 1px #3F8DC1;
+}
+
+.red {
+  background-color: #B72C2C;
+  border: solid 1px #B72C2C;
+}
+
+.gray {
+  background-color: darkgray;
+  border: solid 1px darkgray;
+}
+
+.filters {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dots {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.dot-selected {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+}
+
+.dot-unselected {
+  height: 30px;
+  width: 30px;
+  background-color: #424242;
+  border-radius: 50%;
+}
+
+th.mat-header-cell {
+    text-align: left;
+    max-width: 300px;
+}
+
+td {
+  max-width: 15em;
+  overflow-x: hidden;
+}
+
+.mat-form-field {
+  margin: 5px;
+}

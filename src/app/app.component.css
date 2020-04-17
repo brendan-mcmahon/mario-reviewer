@@ -2,3 +2,33 @@ textarea{
   height: 500px;
   width: 500px;
 }
+
+button {
+  margin: 5px;
+}
+
+mat-card {
+  margin: 5px;
+  min-width: 45vw;
+  /* min-height: 50vh; */
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.double-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.variable-list-item {
+  background-color: rgb(126, 126, 126);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

@@ -1,0 +1,11 @@
+<h2>{{documentLabel}}</h2>
+<mat-form-field>
+  <!-- <textarea [(ngModel)]="fileText"></textarea> -->
+  <mat-label>Paste your json here</mat-label>
+  <textarea [(ngModel)]="fileText" matInput cols="400" cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="25" cdkAutosizeMaxRows="25" ></textarea>
+</mat-form-field>
+
+<mat-dialog-actions>
+  <button mat-raised-button (click)="update()">Save</button>
+  <button mat-raised-button mat-dialog-close >Cancel</button>
+</mat-dialog-actions>
