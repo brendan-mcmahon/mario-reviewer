@@ -19,7 +19,7 @@
     <mat-card-content><p>Click the update button to paste your json and start comparing</p></mat-card-content>
   </mat-card>
 
-  <app-variable-display *ngIf="before" [variables]="before.variables"></app-variable-display>
+  <app-variable-display *ngIf="before" [title]="'Before'" [variables]="before.variables"></app-variable-display>
 
   <button mat-raised-button color="primary" (click)="openBeforeDialog()">Update</button>
 </div>
@@ -40,7 +40,7 @@
     <mat-card-content><p>Click the update button to paste your json and start comparing</p></mat-card-content>
   </mat-card>
 
-  <app-variable-display *ngIf="after" [variables]="after.variables"></app-variable-display>
+  <app-variable-display *ngIf="after" [title]="'After'" [variables]="after.variables"></app-variable-display>
 
   <button mat-raised-button color="primary" (click)="openAfterDialog()">Update</button>
 

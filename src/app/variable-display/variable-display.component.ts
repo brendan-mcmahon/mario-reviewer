@@ -12,18 +12,20 @@ import { FormControl } from '@angular/forms';
 export class VariableDisplayComponent implements OnInit, AfterViewInit {
 
   @Input() variables: Variable[];
+  @Input() title: string;
   @ViewChild(MatSort) sort: MatSort;
 
   public dataSource = new MatTableDataSource<Variable>();
 
-  filterText: string;
-  scopeFilterControl = new FormControl();
-  scopes: string[];
-
   displayedColumns = ['name', 'value', 'scope'];
 
-  statusFilters = ['added', 'deleted', 'edited', 'unchanged'];
+  filterText: string;
+
+  scopeFilterControl = new FormControl();
+  scopeOptions: string[];
   scopeFilters = [];
+
+  statusFilters = ['added', 'deleted', 'edited', 'unchanged'];
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -76,7 +78,9 @@ export class VariableDisplayComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.dataSource.data = this.variables;
-    this.scopes = this.variables.map(v => v.scope).filter((v, i, a) => a.indexOf(v) === i);
+
+    this.scopeOptions = this.variables.map(v => v.scope).filter((v, i, a) => a.indexOf(v) === i);
+    this.scopeFilters = [...this.scopeOptions];
   }
 
   ngAfterViewInit(): void {
