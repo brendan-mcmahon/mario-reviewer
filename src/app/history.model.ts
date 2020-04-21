@@ -45,6 +45,26 @@ export class EnvironmentListComparison {
   }
 }
 
+export class DeployPhaseListComparison {
+  before: DeployPhase[];
+  after: DeployPhase[];
+
+  public constructor(before: DeployPhase[], after: DeployPhase[]) {
+    this.before = before;
+    this.after = after;
+  }
+}
+
+export class WorkflowTaskListComparison {
+  before: WorkflowTask[];
+  after: WorkflowTask[];
+
+  public constructor(before: WorkflowTask[], after: WorkflowTask[]) {
+    this.before = before;
+    this.after = after;
+  }
+}
+
 export class Environment {
   name: string;
   id: number;
@@ -77,13 +97,13 @@ export class DeployPhase {
 export class WorkflowTask {
   version: string;
   name: string;
-  id: number;
+  id: string;
   enabled: boolean;
   inputs: KeyValue[];
   status = 'unchanged';
   childStatus = 'unchanged';
 
-  public constructor(name: string, id: number, inputs: KeyValue[]) {
+  public constructor(name: string, id: string, inputs: KeyValue[]) {
     this.name = name;
     this.inputs = inputs;
     this.id = id;

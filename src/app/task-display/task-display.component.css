@@ -1,3 +1,39 @@
 mat-expansion-panel-body {
   padding-left: 8px;
 }
+
+.green {
+  background-color: #58A053;
+  border: solid 1px #58A053;
+}
+
+.blue {
+  background-color: #3F8DC1;
+  border: solid 1px #3F8DC1;
+}
+
+.red {
+  background-color: #B72C2C;
+  border: solid 1px #B72C2C;
+}
+
+.yellow-border {
+  border: solid yellow;
+}
+
+.mat-expansion-panel-header.mat-expanded:hover.green {
+  background-color: #58A053 !important;
+  border: solid 1px #58A053 !important;
+}
+
+.mat-expansion-panel-header.mat-expanded:hover.blue {
+  background-color: #3F8DC1 !important;
+  border: solid 1px #3F8DC1 !important;
+}
+
+
+.mat-expansion-panel-header.mat-expanded:hover.red {
+  background-color: #B72C2C !important;
+  border: solid 1px #B72C2C !important;
+}
+

@@ -40,7 +40,7 @@ export class DocumentDialogComponent implements OnInit {
             for (const i in wfTask.inputs) {
               inputs.push({ key: i, value: wfTask.inputs[i], status: 'unchanged'});
             }
-            wfTasks.push(new WorkflowTask(wfTask.name, wfTask.id, inputs));
+            wfTasks.push(new WorkflowTask(wfTask.name, wfTask.taskId, inputs));
           });
           phases.push(new DeployPhase(dp.name, wfTasks));
         });

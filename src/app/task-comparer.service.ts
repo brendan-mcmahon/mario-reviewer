@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Environment, DeployPhase, WorkflowTask, KeyValue, EnvironmentListComparison } from './history.model';
+import { Environment, DeployPhase, WorkflowTask, KeyValue, EnvironmentListComparison, DeployPhaseListComparison, WorkflowTaskListComparison } from './history.model';
 
 @Injectable({
   providedIn: 'root'
@@ -30,79 +30,109 @@ export class TaskComparerService {
     const beforeUnchangedEnvironments = before.filter(b => coexistingEnvironmentIds.includes(b.id));
     const afterUnchangedEnvironments = after.filter(b => coexistingEnvironmentIds.includes(b.id));
 
-    this.processDeployPhases(beforeUnchangedEnvironments, afterUnchangedEnvironments);
+    const unchangedEnvironmentsWithDeployPhaseChanges = this.processDeployPhases(beforeUnchangedEnvironments, afterUnchangedEnvironments);
 
     const result =  new EnvironmentListComparison(
-      [...deletedEnvironments, ...editedBeforeEnvironments, ...unchangedEnvironments],
-      [...addedEnvironments, ...editedAfterEnvironments, ...unchangedEnvironments]);
-
-    console.log(result);
+      [...deletedEnvironments, ...editedBeforeEnvironments, ...unchangedEnvironmentsWithDeployPhaseChanges.before],
+      [...addedEnvironments, ...editedAfterEnvironments, ...unchangedEnvironmentsWithDeployPhaseChanges.after]);
 
     return result;
   }
 
-  private processDeployPhases(beforeUnchangedEnvironments: Environment[], afterUnchangedEnvironments: Environment[]) {
-    beforeUnchangedEnvironments.forEach(be => {
+  // tslint:disable-next-line: max-line-length
+  private processDeployPhases(beforeUnchangedEnvironments: Environment[], afterUnchangedEnvironments: Environment[]): EnvironmentListComparison {
+    beforeUnchangedEnvironments.forEach(beforeEnvironment => {
       // get the matching 'after' environment;
-      const ae = afterUnchangedEnvironments.filter(e => e.name === be.name)[0];
+      const afterEnvironment = afterUnchangedEnvironments.filter(e => e.name === beforeEnvironment.name)[0];
 
-      let deletedDeployPhases = this.difference(be.deployPhases, ae.deployPhases, (a, b) => a.name === b.name);
-      deletedDeployPhases = deletedDeployPhases.map(d => { d.status = 'deleted'; return d; });
+      if (afterEnvironment) {
+        let deletedDeployPhases = this.difference(beforeEnvironment.deployPhases, afterEnvironment.deployPhases, (a, b) => a.name === b.name);
+        deletedDeployPhases = deletedDeployPhases.map(d => { d.status = 'deleted'; return d; });
 
-      let addedDeployPhases = this.difference(ae.deployPhases, be.deployPhases, (a, b) => a.name === b.name);
-      addedDeployPhases = addedDeployPhases.map(a => { a.status = 'added'; return a; });
+        let addedDeployPhases = this.difference(afterEnvironment.deployPhases, beforeEnvironment.deployPhases, (a, b) => a.name === b.name);
+        addedDeployPhases = addedDeployPhases.map(a => { a.status = 'added'; return a; });
 
-      // let editedBeforeDeployPhases = this.intersect(be.deployPhases, ae.deployPhases, (a, b) => a.name === b.name && (a.name !== b.name));
-      // editedBeforeDeployPhases = editedBeforeDeployPhases.map(e => { e.status = 'edited'; return e; });
+        const unchangedDeployPhases = this.intersect(beforeEnvironment.deployPhases, afterEnvironment.deployPhases, (a, b) => a.name === b.name);
 
-      // let editedAfterDeployPhases = this.intersect(ae.deployPhases, be.deployPhases, (a, b) => a.name === b.name && (a.name !== b.name));
-      // editedAfterDeployPhases = editedAfterDeployPhases.map(e => { e.status = 'edited'; return e; });
+        const coexistingDeployPhaseIds = [...unchangedDeployPhases].map(e => e.name);
+        const beforeUnchangedDeployPhases = beforeEnvironment.deployPhases.filter(dp => coexistingDeployPhaseIds.includes(dp.name));
+        const afterUnchangedDeployPhases = afterEnvironment.deployPhases.filter(dp => coexistingDeployPhaseIds.includes(dp.name));
 
-      const unchangedDeployPhases = this.intersect(be.deployPhases, ae.deployPhases, (a, b) => a.name === b.name);
+        const unchangedDeployPhasesWithWorkflowTaskChanges = this.processWorkflowTasks(beforeUnchangedDeployPhases, afterUnchangedDeployPhases);
 
-      const coexistingDeployPhaseIds = [...unchangedDeployPhases].map(e => e.name);
-      const beforeUnchangedDeployPhases = be.deployPhases.filter(dp => coexistingDeployPhaseIds.includes(dp.name));
-      const afterUnchangedDeployPhases = ae.deployPhases.filter(dp => coexistingDeployPhaseIds.includes(dp.name));
-
-      this.processWorkflowTasks(beforeUnchangedDeployPhases, afterUnchangedDeployPhases);
-
-      be.deployPhases = [...deletedDeployPhases, ...unchangedDeployPhases];
-      ae.deployPhases = [...addedDeployPhases, ...unchangedDeployPhases];
+        beforeEnvironment.deployPhases = [...deletedDeployPhases, ...unchangedDeployPhasesWithWorkflowTaskChanges.before];
+        afterEnvironment.deployPhases = [...addedDeployPhases, ...unchangedDeployPhasesWithWorkflowTaskChanges.after];
+      }
     });
+
+    return new EnvironmentListComparison(beforeUnchangedEnvironments, afterUnchangedEnvironments);
   }
 
-  private processWorkflowTasks(beforeUnchangedDeployPhases: DeployPhase[], afterUnchangedDeployPhases: DeployPhase[]) {
-    beforeUnchangedDeployPhases.forEach(bdp => {
+  private processWorkflowTasks(beforeUnchangedDeployPhases: DeployPhase[], afterUnchangedDeployPhases: DeployPhase[]): DeployPhaseListComparison {
+    beforeUnchangedDeployPhases.forEach(beforePhase => {
       // get the matching 'after' environment;
-      const adp = afterUnchangedDeployPhases.filter(d => d.name === bdp.name)[0];
+      const afterPhase = afterUnchangedDeployPhases.filter(d => d.name === beforePhase.name)[0];
 
-      let deletedWorkflowTasks = this.difference(bdp.workflowTasks, adp.workflowTasks, (a, b) => a.id === b.id);
+      if (afterPhase) {
+
+      let deletedWorkflowTasks = this.difference(beforePhase.workflowTasks, afterPhase.workflowTasks, (a, b) => a.name === b.name);
       deletedWorkflowTasks = deletedWorkflowTasks.map(d => { d.status = 'deleted'; return d; });
 
-      let addedWorkflowTasks = this.difference(adp.workflowTasks, bdp.workflowTasks, (a, b) => a.id === b.id);
+      let addedWorkflowTasks = this.difference(afterPhase.workflowTasks, beforePhase.workflowTasks, (a, b) => a.name === b.name);
       addedWorkflowTasks = addedWorkflowTasks.map(a => { a.status = 'added'; return a; });
 
-      let editedBeforeWorkflowTasks = this.intersect(bdp.workflowTasks, adp.workflowTasks, (a, b) => a.id === b.id && (a.name !== b.name));
-      editedBeforeWorkflowTasks = editedBeforeWorkflowTasks.map(e => { e.status = 'edited'; return e; });
+      const unchangedWorkflowTasks = this.intersect(beforePhase.workflowTasks, afterPhase.workflowTasks, (a, b) => a.name === b.name);
 
-      let editedAfterWorkflowTasks = this.intersect(adp.workflowTasks, bdp.workflowTasks, (a, b) => a.id === b.id && (a.name !== b.name));
-      editedAfterWorkflowTasks = editedAfterWorkflowTasks.map(e => { e.status = 'edited'; return e; });
+      beforePhase.childStatus = (deletedWorkflowTasks.length < 0) ? 'modified' : 'unchanged';
+      afterPhase.childStatus = (addedWorkflowTasks.length < 0) ? 'modified' : 'unchanged';
 
-      const unchangedWorkflowTasks = this.intersect(bdp.workflowTasks, adp.workflowTasks, (a, b) => a.id === b.id && a.name === b.name);
+      const coexistingWorkflowTaskIds = [...unchangedWorkflowTasks].map(e => e.name);
+      const beforeUnchangedWorkflowTasks = beforePhase.workflowTasks.filter(wft => coexistingWorkflowTaskIds.includes(wft.name));
+      const afterUnchangedWorkflowTasks = afterPhase.workflowTasks.filter(wft => coexistingWorkflowTaskIds.includes(wft.name));
 
-      bdp.childStatus = (deletedWorkflowTasks.length < 0 || editedBeforeWorkflowTasks.length < 0) ? 'modified' : 'unchanged';
-      adp.childStatus = (addedWorkflowTasks.length < 0 || editedAfterWorkflowTasks.length < 0) ? 'modified' : 'unchanged';
+      this.processInputs(beforeUnchangedWorkflowTasks, afterUnchangedWorkflowTasks);
 
-      const coexistingDeployPhaseIds = [...editedBeforeWorkflowTasks, ...unchangedWorkflowTasks].map(e => e.id);
-      const beforeUnchangedWorkflowTasks = bdp.workflowTasks.filter(wft => coexistingDeployPhaseIds.includes(wft.id));
-      const afterUnchangedWorkflowTasks = adp.workflowTasks.filter(wft => coexistingDeployPhaseIds.includes(wft.id));
-
-      // this.processWorkflowTasks(beforeUnchangedWorkflowTasks, afterUnchangedWorkflowTasks);
-
-      bdp.workflowTasks = [...deletedWorkflowTasks, ...editedBeforeWorkflowTasks, ...unchangedWorkflowTasks];
-      adp.workflowTasks = [...addedWorkflowTasks, ...editedAfterWorkflowTasks, ...unchangedWorkflowTasks];
+      beforePhase.workflowTasks = [...deletedWorkflowTasks, ...unchangedWorkflowTasks];
+      afterPhase.workflowTasks = [...addedWorkflowTasks, ...unchangedWorkflowTasks];
+      }
     });
+
+    return new DeployPhaseListComparison(beforeUnchangedDeployPhases, afterUnchangedDeployPhases);
   }
+
+  // tslint:disable-next-line: max-line-length
+  private processInputs(beforeUnchangedWorkflowTasks: WorkflowTask[], afterUnchangedWorkflowTasks: WorkflowTask[]): WorkflowTaskListComparison {
+    beforeUnchangedWorkflowTasks.forEach(beforeTask => {
+      // get the matching 'after' environment;
+      const afterTask = afterUnchangedWorkflowTasks.filter(d => d.name === beforeTask.name)[0];
+
+      if (afterTask) {
+
+      let deletedInputs = this.difference(beforeTask.inputs, afterTask.inputs, (a, b) => a.key === b.key);
+      deletedInputs = deletedInputs.map(d => { d.status = 'deleted'; return d; });
+
+      let addedInputs = this.difference(afterTask.inputs, beforeTask.inputs, (a, b) => a.key === b.key);
+      addedInputs = addedInputs.map(a => { a.status = 'added'; return a; });
+
+      let editedBeforeInputs = this.intersect(beforeTask.inputs, afterTask.inputs, (a, b) => a.key === b.key && (a.value !== b.value));
+      editedBeforeInputs = editedBeforeInputs.map(e => { e.status = 'edited'; return e; });
+
+      let editedAfterInputs = this.intersect(afterTask.inputs, beforeTask.inputs, (a, b) => a.key === b.key && (a.value !== b.value));
+      editedAfterInputs = editedAfterInputs.map(e => { e.status = 'edited'; return e; });
+
+      const unchangedInputs = this.intersect(beforeTask.inputs, afterTask.inputs, (a, b) => a.key === b.key && a.value === b.value);
+
+      beforeTask.childStatus = (deletedInputs.length < 0 || editedBeforeInputs.length < 0) ? 'modified' : 'unchanged';
+      afterTask.childStatus = (addedInputs.length < 0 || editedAfterInputs.length < 0) ? 'modified' : 'unchanged';
+
+      beforeTask.inputs = [...deletedInputs, ...editedBeforeInputs, ...unchangedInputs];
+      afterTask.inputs = [...addedInputs, ...editedAfterInputs, ...unchangedInputs];
+      }
+    });
+
+    return new WorkflowTaskListComparison(beforeUnchangedWorkflowTasks, afterUnchangedWorkflowTasks);
+  }
+
 
   private difference(listA: any[], listB: any[], predicate: (x: any, y: any) => boolean): any[] {
     return listA.filter(a => listB.filter(b => {

@@ -8,21 +8,21 @@
 
       <!-- <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle> -->
         <mat-expansion-panel *ngFor="let env of environments">
-          <mat-expansion-panel-header>
+          <mat-expansion-panel-header [ngClass]="getEnvironmentStatusClass(env)">
             <mat-panel-title>
               {{env.name}}
             </mat-panel-title>
           </mat-expansion-panel-header>
 
           <mat-expansion-panel *ngFor="let phase of env.deployPhases">
-          <mat-expansion-panel-header>
+          <mat-expansion-panel-header [ngClass]="getDeployPhaseStatusClass(phase)">
             <mat-panel-title>
               {{phase.name}}
             </mat-panel-title>
           </mat-expansion-panel-header>
 
             <mat-expansion-panel *ngFor="let task of phase.workflowTasks">
-              <mat-expansion-panel-header>
+              <mat-expansion-panel-header [ngClass]="getWorkflowTaskStatusClass(task)">
                 <mat-panel-title>
                   {{task.name}}
                 </mat-panel-title>
