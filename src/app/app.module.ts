@@ -11,6 +11,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,6 +25,8 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { DocumentDialogComponent } from './document-dialog/document-dialog.component';
 import { VariableDisplayComponent } from './variable-display/variable-display.component';
 import { HeaderComponent } from './header/header.component';
+import { TaskDisplayComponent } from './task-display/task-display.component';
+import { WorkflowTaskComponent } from './task-display/workflow-task/workflow-task.component';
 
 @NgModule({
   exports: [
@@ -35,7 +40,9 @@ import { HeaderComponent } from './header/header.component';
     AppComponent,
     DocumentDialogComponent,
     VariableDisplayComponent,
-    HeaderComponent
+    HeaderComponent,
+    TaskDisplayComponent,
+    WorkflowTaskComponent,
   ],
   imports: [
     BrowserModule,
@@ -55,7 +62,10 @@ import { HeaderComponent } from './header/header.component';
     MatTableModule,
     MatSortModule,
     MatTooltipModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTabsModule,
+    MatTreeModule,
+    MatExpansionModule
   ],
   providers: [],
   bootstrap: [AppComponent]

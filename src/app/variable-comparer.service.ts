@@ -25,8 +25,6 @@ export class VariableComparerService {
 
     const result =  new VariableListComparison([...deletions, ...editedBefore, ...unchanged], [...additions, ...editedAfter, ...unchanged]);
 
-    console.log(result);
-
     return result;
   }
 

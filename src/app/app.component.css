@@ -14,7 +14,11 @@ mat-card {
 }
 
 app-variable-display {
-  min-width: 45vw;
+  min-width: 50%;
+}
+
+app-task-display {
+  min-width: 50%;
 }
 
 .flex-container {

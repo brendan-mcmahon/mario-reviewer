@@ -35,7 +35,63 @@ export class VariableListComparison {
   }
 }
 
+export class EnvironmentListComparison {
+  before: Environment[];
+  after: Environment[];
+
+  public constructor(before: Environment[], after: Environment[]) {
+    this.before = before;
+    this.after = after;
+  }
+}
+
 export class Environment {
   name: string;
+  id: number;
   variables: Variable[] = [];
+  deployPhases: DeployPhase[];
+  status = 'unchanged';
+  childStatus = 'unchanged';
+
+  public constructor (name: string, id: number, deployPhases: DeployPhase[]) {
+    this.name = name;
+    this.id = id;
+    this.deployPhases = deployPhases;
+  }
+}
+
+export class DeployPhase {
+  rank: number;
+  name: string;
+  // add artifacts download input
+  workflowTasks: WorkflowTask[];
+  status = 'unchanged';
+  childStatus = 'unchanged';
+
+  public constructor(name: string, workflowTasks: WorkflowTask[]) {
+    this.name = name;
+    this.workflowTasks = workflowTasks;
+  }
+}
+
+export class WorkflowTask {
+  version: string;
+  name: string;
+  id: number;
+  enabled: boolean;
+  inputs: KeyValue[];
+  status = 'unchanged';
+  childStatus = 'unchanged';
+
+  public constructor(name: string, id: number, inputs: KeyValue[]) {
+    this.name = name;
+    this.inputs = inputs;
+    this.id = id;
+  }
+}
+
+export interface KeyValue {
+  key: string;
+  value: string;
+  status: string;
 }

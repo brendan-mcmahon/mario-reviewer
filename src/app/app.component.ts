@@ -3,6 +3,7 @@ import { HistoryDocument, Variable } from './history.model';
 import { MatDialog } from '@angular/material/dialog';
 import { DocumentDialogComponent } from './document-dialog/document-dialog.component';
 import { VariableComparerService } from './variable-comparer.service';
+import { TaskComparerService } from './task-comparer.service';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,10 @@ export class AppComponent {
   before: HistoryDocument;
   after: HistoryDocument;
 
-  public constructor(public dialog: MatDialog, private variableComparer: VariableComparerService) { }
+  public constructor(
+    public dialog: MatDialog,
+    private variableComparer: VariableComparerService,
+    private taskComparer: TaskComparerService) { }
 
   openBeforeDialog(): void {
     const dialogRef = this.dialog.open(DocumentDialogComponent, {
@@ -25,9 +29,13 @@ export class AppComponent {
     dialogRef.afterClosed().subscribe((result) => {
       this.before = result;
       if (this.before && this.after) {
-        const comparisonResults = this.variableComparer.compare(this.before.variables, this.after.variables);
-        this.before.variables = comparisonResults.before;
-        this.after.variables = comparisonResults.after;
+        const variableComparisonResults = this.variableComparer.compare(this.before.variables, this.after.variables);
+        this.before.variables = variableComparisonResults.before;
+        this.after.variables = variableComparisonResults.after;
+
+        const taskComparisonResults = this.taskComparer.compare(this.before.environments, this.after.environments);
+        this.before.environments = taskComparisonResults.before;
+        this.after.environments = taskComparisonResults.after;
       }
     });
   }
@@ -41,9 +49,13 @@ export class AppComponent {
     dialogRef.afterClosed().subscribe((result) => {
       this.after = result;
       if (this.before && this.after) {
-        const comparisonResults = this.variableComparer.compare(this.before.variables, this.after.variables);
-        this.before.variables = comparisonResults.before;
-        this.after.variables = comparisonResults.after;
+        const variableComparisonResults = this.variableComparer.compare(this.before.variables, this.after.variables);
+        this.before.variables = variableComparisonResults.before;
+        this.after.variables = variableComparisonResults.after;
+
+        const taskComparisonResults = this.taskComparer.compare(this.before.environments, this.after.environments);
+        this.before.environments = taskComparisonResults.before;
+        this.after.environments = taskComparisonResults.after;
       }
     });
   }

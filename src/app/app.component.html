@@ -11,22 +11,27 @@
       <button style="float: right;" mat-raised-button color="primary" (click)="openAfterDialog()">Paste File</button>
     </div>
 
-
   </div>
 
-  <div class="tab-body">
+  <mat-card>
 
-    <div class="no-content"></div>
+  <mat-tab-group dynamicHeight="true">
 
-    <!-- tab 1 -->
-    <div class="side-by-side">
-      <app-variable-display *ngIf="before" [title]="'Before'" [variables]="before.variables"></app-variable-display>
-      <app-variable-display *ngIf="after" [title]="'After'" [variables]="after.variables"></app-variable-display>
-    </div>
+    <mat-tab label="Variables">
+      <div class="side-by-side">
+        <app-variable-display *ngIf="before" [title]="'Before'" [variables]="before.variables"></app-variable-display>
+        <app-variable-display *ngIf="after" [title]="'After'" [variables]="after.variables"></app-variable-display>
+      </div>
+    </mat-tab>
 
-    <!-- tab 2 -->
-    <!-- app-task-comparison-display (or whatever) -->
+    <mat-tab label="Tasks">
+      <div class="side-by-side">
+        <app-task-display *ngIf="before" [title]="'Before'" [environments]="before.environments"></app-task-display>
+        <app-task-display *ngIf="after" [title]="'After'" [environments]="after.environments"></app-task-display>
+      </div>
+    </mat-tab>
 
-  </div>
+  </mat-tab-group>
+</mat-card>
 
 </div>
