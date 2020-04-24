@@ -23,7 +23,7 @@
 
             <mat-expansion-panel *ngFor="let task of phase.workflowTasks">
               <mat-expansion-panel-header [ngClass]="getWorkflowTaskStatusClass(task)">
-                <mat-panel-title>
+                <mat-panel-title [ngClass]="getEnabledStatusClass(task)" >
                   {{task.name}}
                 </mat-panel-title>
               </mat-expansion-panel-header>

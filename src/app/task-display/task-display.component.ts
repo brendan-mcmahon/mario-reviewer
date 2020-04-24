@@ -24,8 +24,11 @@ export class TaskDisplayComponent {
   }
 
   getWorkflowTaskStatusClass(wfTask: WorkflowTask): string {
-    console.log(`getting task status ${wfTask.status}`);
     return this.getStatus(wfTask.status, wfTask.childStatus);
+  }
+
+  getEnabledStatusClass(wfTask: WorkflowTask): string {
+    return wfTask.enabled ? '' : 'disabled';
   }
 
   private getStatus(status: string, childStatus: string) {

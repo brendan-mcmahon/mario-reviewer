@@ -37,3 +37,6 @@ mat-expansion-panel-body {
   border: solid 1px #B72C2C !important;
 }
 
+.disabled {
+  text-decoration: line-through;
+}

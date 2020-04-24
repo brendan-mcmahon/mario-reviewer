@@ -103,10 +103,11 @@ export class WorkflowTask {
   status = 'unchanged';
   childStatus = 'unchanged';
 
-  public constructor(name: string, id: string, inputs: KeyValue[]) {
+  public constructor(name: string, id: string, enabled: boolean, inputs: KeyValue[]) {
     this.name = name;
     this.inputs = inputs;
     this.id = id;
+    this.enabled = enabled;
   }
 }
 
