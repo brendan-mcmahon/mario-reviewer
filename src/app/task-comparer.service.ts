@@ -42,7 +42,6 @@ export class TaskComparerService {
   // tslint:disable-next-line: max-line-length
   private processDeployPhases(beforeUnchangedEnvironments: Environment[], afterUnchangedEnvironments: Environment[]): EnvironmentListComparison {
     beforeUnchangedEnvironments.forEach(beforeEnvironment => {
-      // get the matching 'after' environment;
       const afterEnvironment = afterUnchangedEnvironments.filter(e => e.name === beforeEnvironment.name)[0];
 
       if (afterEnvironment) {
@@ -60,6 +59,9 @@ export class TaskComparerService {
 
         const unchangedDeployPhasesWithWorkflowTaskChanges = this.processWorkflowTasks(beforeUnchangedDeployPhases, afterUnchangedDeployPhases);
 
+        beforeEnvironment.childStatus = (deletedDeployPhases.length > 0 || unchangedDeployPhasesWithWorkflowTaskChanges.before.some( a => a.childStatus === 'modified')) ? 'modified' : 'unchanged';
+        afterEnvironment.childStatus = (addedDeployPhases.length > 0 || unchangedDeployPhasesWithWorkflowTaskChanges.after.some( a => a.childStatus === 'modified')) ? 'modified' : 'unchanged';
+
         beforeEnvironment.deployPhases = [...deletedDeployPhases, ...unchangedDeployPhasesWithWorkflowTaskChanges.before];
         afterEnvironment.deployPhases = [...addedDeployPhases, ...unchangedDeployPhasesWithWorkflowTaskChanges.after];
       }
@@ -70,7 +72,6 @@ export class TaskComparerService {
 
   private processWorkflowTasks(beforeUnchangedDeployPhases: DeployPhase[], afterUnchangedDeployPhases: DeployPhase[]): DeployPhaseListComparison {
     beforeUnchangedDeployPhases.forEach(beforePhase => {
-      // get the matching 'after' environment;
       const afterPhase = afterUnchangedDeployPhases.filter(d => d.name === beforePhase.name)[0];
 
       if (afterPhase) {
@@ -83,17 +84,17 @@ export class TaskComparerService {
 
       const unchangedWorkflowTasks = this.intersect(beforePhase.workflowTasks, afterPhase.workflowTasks, (a, b) => a.name === b.name);
 
-      beforePhase.childStatus = (deletedWorkflowTasks.length < 0) ? 'modified' : 'unchanged';
-      afterPhase.childStatus = (addedWorkflowTasks.length < 0) ? 'modified' : 'unchanged';
-
       const coexistingWorkflowTaskIds = [...unchangedWorkflowTasks].map(e => e.name);
       const beforeUnchangedWorkflowTasks = beforePhase.workflowTasks.filter(wft => coexistingWorkflowTaskIds.includes(wft.name));
       const afterUnchangedWorkflowTasks = afterPhase.workflowTasks.filter(wft => coexistingWorkflowTaskIds.includes(wft.name));
 
-      this.processInputs(beforeUnchangedWorkflowTasks, afterUnchangedWorkflowTasks);
+      const unchangedWorkflowTasksWithInputChanges = this.processInputs(beforeUnchangedWorkflowTasks, afterUnchangedWorkflowTasks);
 
-      beforePhase.workflowTasks = [...deletedWorkflowTasks, ...unchangedWorkflowTasks];
-      afterPhase.workflowTasks = [...addedWorkflowTasks, ...unchangedWorkflowTasks];
+      beforePhase.childStatus = (deletedWorkflowTasks.length > 0 || unchangedWorkflowTasksWithInputChanges.before.some( a => a.childStatus === 'modified')) ? 'modified' : 'unchanged';
+      afterPhase.childStatus = (addedWorkflowTasks.length > 0 || unchangedWorkflowTasksWithInputChanges.after.some( a => a.childStatus === 'modified')) ? 'modified' : 'unchanged';
+
+      beforePhase.workflowTasks = [...deletedWorkflowTasks, ...unchangedWorkflowTasksWithInputChanges.before];
+      afterPhase.workflowTasks = [...addedWorkflowTasks, ...unchangedWorkflowTasksWithInputChanges.after];
       }
     });
 
@@ -103,7 +104,6 @@ export class TaskComparerService {
   // tslint:disable-next-line: max-line-length
   private processInputs(beforeUnchangedWorkflowTasks: WorkflowTask[], afterUnchangedWorkflowTasks: WorkflowTask[]): WorkflowTaskListComparison {
     beforeUnchangedWorkflowTasks.forEach(beforeTask => {
-      // get the matching 'after' environment;
       const afterTask = afterUnchangedWorkflowTasks.filter(d => d.name === beforeTask.name)[0];
 
       if (afterTask) {
@@ -122,8 +122,8 @@ export class TaskComparerService {
 
       const unchangedInputs = this.intersect(beforeTask.inputs, afterTask.inputs, (a, b) => a.key === b.key && a.value === b.value);
 
-      beforeTask.childStatus = (deletedInputs.length < 0 || editedBeforeInputs.length < 0) ? 'modified' : 'unchanged';
-      afterTask.childStatus = (addedInputs.length < 0 || editedAfterInputs.length < 0) ? 'modified' : 'unchanged';
+      beforeTask.childStatus = (deletedInputs.length > 0 || editedBeforeInputs.length > 0) ? 'modified' : 'unchanged';
+      afterTask.childStatus = (addedInputs.length > 0 || editedAfterInputs.length > 0) ? 'modified' : 'unchanged';
 
       beforeTask.inputs = [...deletedInputs, ...editedBeforeInputs, ...unchangedInputs];
       afterTask.inputs = [...addedInputs, ...editedAfterInputs, ...unchangedInputs];

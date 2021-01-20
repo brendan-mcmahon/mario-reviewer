@@ -14,12 +14,10 @@ export class TaskDisplayComponent {
   constructor() { }
 
   getEnvironmentStatusClass(env: Environment): string {
-    // console.log(`getting environment status ${env.status}`);
     return this.getStatus(env.status, env.childStatus);
   }
 
   getDeployPhaseStatusClass(phase: DeployPhase): string {
-    // console.log(`getting phase status ${phase.status}`);
     return this.getStatus(phase.status, phase.childStatus);
   }
 
@@ -35,15 +33,12 @@ export class TaskDisplayComponent {
     let classString = childStatus === 'modified' ? 'yellow-border ' : '';
     switch (status) {
       case 'added':
-        console.log('this is added!');
         classString += 'green';
         break;
       case 'deleted':
-        // console.log('this is deleted!');
         classString += 'red';
         break;
       case 'edited':
-        // console.log('this is edited!');
         classString += 'blue';
         break;
       default:
