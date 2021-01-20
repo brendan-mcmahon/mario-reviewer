@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { WorkflowTask, KeyValue } from 'src/app/history.model';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource} from '@angular/material/table';
 
 @Component({
   selector: 'app-workflow-task',
@@ -17,6 +17,29 @@ export class WorkflowTaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataSource.data = this.wfTask.inputs;
+  }
+
+  getInputStatusClass(row: KeyValue): string {
+    return this.getStatus(row.status);
+  }
+
+  private getStatus(status: string) {
+    let classString = '';
+    switch (status) {
+      case 'added':
+        classString += 'green';
+        break;
+      case 'deleted':
+        classString += 'red';
+        break;
+      case 'edited':
+        classString += 'blue';
+        break;
+      default:
+        classString += 'gray';
+        break;
+    }
+    return classString;
   }
 
 }
